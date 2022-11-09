@@ -16,117 +16,40 @@ private class Generate : SimpleCommand() {
                 .required()
 
     override fun handle() {
+        Maze.grid(size)
+            .openBottom(1, 1)
+            .openRight(1, 0)
+            .print()
 
-        printMaze(
-            Maze.grid(size)
-                .openBottom(1, 1)
-                .openRight(1, 0)
-        )
-        printMaze(
-            Maze.grid(size)
-                .openBottom(1, 1)
-                .openRight(1, 1)
-        )
-        printMaze(
-            Maze.grid(size)
-                .openBottom(0, 1)
-                .openRight(1, 0)
-        )
-        printMaze(
-            Maze.grid(size)
-                .openBottom(0, 1)
-                .openRight(1, 1)
-        )
-        printMaze(
-            Maze.grid(size)
-                .openBottom(0, 1)
-                .openRight(1, 1)
-                .openRight(0, 0)
-        )
-        printMaze(
-            Maze.empty(size)
-        )
-    }
+        Maze.grid(size)
+            .openBottom(1, 1)
+            .openRight(1, 1)
+            .print()
 
-    private fun printMaze(maze: Maze) {
-        repeat(size + 1) { y ->
-            repeat(size + 1) { x ->
-                when (y) {
-                    0 -> when (x) {
-                        0 -> print('┌')
-                        size -> print('┐')
-                        else -> if (maze.cell(y, x).borders.left) print('┬') else print('─')
-                    }
-                    size -> when (x) {
-                        0 -> print('└')
-                        size -> print('┘')
-                        else -> if (maze.cell(y - 1, x).borders.left) print('┴') else print('─')
-                    }
-                    else -> when (x) {
-                        0 -> if (maze.cell(y, x).borders.top) print('├') else print('│')
-                        size -> if (maze.cell(y, x - 1).borders.top) print('┤') else print('│')
-                        else -> {
-                            var sign = ' '
+        Maze.grid(size)
+            .openBottom(0, 1)
+            .openRight(1, 0)
+            .print()
 
-                            if (maze.cell(y - 1, x - 1).borders.bottom) {
-                                if (maze.cell(y - 1, x - 1).borders.right) {
-                                    sign = if (maze.cell(y, x - 1).borders.right) {
-                                        if (maze.cell(y - 1, x).borders.bottom) {
-                                            '┼'
-                                        } else {
-                                            '┤'
-                                        }
-                                    } else {
-                                        if (maze.cell(y - 1, x).borders.bottom) {
-                                            '┴'
-                                        } else {
-                                            '┘'
-                                        }
-                                    }
-                                } else {
-                                    sign = if (maze.cell(y, x - 1).borders.right) {
-                                        if (maze.cell(y - 1, x).borders.bottom) {
-                                            '┬'
-                                        } else {
-                                            '┐'
-                                        }
-                                    } else {
-                                        '─'
-                                    }
-                                }
-                            } else {
-                                if (maze.cell(y - 1, x).borders.right) {
-                                    if (maze.cell(y - 1, x).borders.bottom) {
-                                        sign = if (maze.cell(y - 1, x - 1).borders.right) {
+        Maze.grid(size)
+            .openBottom(0, 1)
+            .openRight(1, 1)
+            .print()
 
-                                            if (maze.cell(y, x).borders.left) {
-                                                '├'
-                                            } else {
-                                                '└'
-                                            }
-                                        } else {
-                                            '┌'
-                                        }
-                                    } else {
-                                        sign = if (maze.cell(y, x).borders.left) {
-                                            '│'
-                                        } else {
-                                            ' '
-                                        }
-                                    }
-                                } else {
-                                    sign =   ' '
-                                }
-                            }
+        Maze.grid(size)
+            .openBottom(0, 1)
+            .openRight(1, 1)
+            .openRight(0, 0)
+            .print()
 
-                            print(sign)
-                        }
-                    }
-                }
+        Maze.grid(size)
+            .openBottom(0, 0)
+            .openRight(1, 1)
+            .openRight(0, 0)
+            .openRight(0, 1)
+            .print()
 
-            }
-            print('\n')
-        }
-        print('\n')
+
+        Maze.empty(size).print()
     }
 }

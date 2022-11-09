@@ -10,6 +10,9 @@ internal data class Cell(
         val left: Boolean = false,
     )
 
+    val closedRight = borders.right
+    val closedBottom = borders.bottom
+
     companion object {
         fun closedTopLeft() = Cell(Borders(top = true, left = true))
         fun closedTopRight() = Cell(Borders(top = true, right = true))
@@ -25,7 +28,7 @@ internal data class Cell(
 }
 
 internal data class Maze(
-    private val size: Int,
+    val size: Int,
     private val cells: Map<Int, Map<Int, Cell>>,
 ) {
     init {
