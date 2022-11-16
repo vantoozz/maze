@@ -1,23 +1,27 @@
 package io.github.vantoozz.maze
 
 internal fun Maze.print() {
+    println(asString())
+}
+
+internal fun Maze.asString() = sequence {
     repeat(size + 1) { y ->
         repeat(size + 1) { x ->
             when (y) {
                 0 -> when (x) {
-                    0 -> print('┌')
-                    size -> print('┐')
-                    else -> if (cell(y, x - 1).closedRight) print('┬') else print('─')
+                    0 -> yield('┌')
+                    size -> yield('┐')
+                    else -> if (cell(y, x - 1).closedRight) yield('┬') else yield('─')
                 }
                 size -> when (x) {
-                    0 -> print('└')
-                    size -> print('┘')
-                    else -> if (cell(y - 1, x - 1).closedRight) print('┴') else print('─')
+                    0 -> yield('└')
+                    size -> yield('┘')
+                    else -> if (cell(y - 1, x - 1).closedRight) yield('┴') else yield('─')
                 }
                 else -> {
                     when (x) {
-                        0 -> if (cell(y - 1, x).closedBottom) print('├') else print('│')
-                        size -> if (cell(y - 1, x - 1).closedBottom) print('┤') else print('│')
+                        0 -> if (cell(y - 1, x).closedBottom) yield('├') else yield('│')
+                        size -> if (cell(y - 1, x - 1).closedBottom) yield('┤') else yield('│')
                         else -> {
 
                             val upperCell = cell(y - 1, x)
@@ -31,9 +35,9 @@ internal fun Maze.print() {
                             val bit4 = upperCell.closedRight
 
                             val signs = if (bit0) {
-                                listOf('┼', '┬', '├', ' ', '┌', ' ', '┤', '┐', '│', ' ')
+                                listOf('┼', '┬', '├', ' ', '┌', '┌', '┤', '┐', '╷', '╷')
                             } else {
-                                listOf('┴', '─', '└', ' ', '┌', ' ', '┘', '─', ' ', ' ')
+                                listOf('┴', '─', '└', ' ', '┌', ' ', '┘', '─', '╵', ' ')
                             }
 
                             val sign =
@@ -67,21 +71,31 @@ internal fun Maze.print() {
                                             signs[7]
                                         }
                                     } else {
-                                        if (bit4) {
-                                            signs[8]
-                                        } else {
-                                            signs[9]
+                                        if(bit3){
+                                            if (bit4) {
+                                                '1'
+                                            } else {
+                                                '2'
+                                            }
                                         }
+                                        else{
+                                            if (bit4) {
+                                                '3'
+                                            } else {
+                                                '4'
+                                            }
+                                        }
+
                                     }
                                 }
 
-                            print(sign)
+                            yield(sign)
                         }
                     }
                 }
             }
         }
-        print('\n')
+        yield('\n')
     }
-    print('\n')
-}
+    yield('\n')
+}.joinToString("")

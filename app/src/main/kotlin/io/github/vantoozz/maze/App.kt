@@ -49,7 +49,62 @@ private class Generate : SimpleCommand() {
             .openRight(0, 1)
             .print()
 
+        Maze.grid(3)
+            .openRight(0, 0)
+            .openRight(0, 1)
+            .openBottom(0, 0)
+            .openBottom(0, 1)
+            .openBottom(0, 2)
+            .openBottom(1, 1)
+            .openRight(2, 1)
+            .print()
 
         Maze.empty(size).print()
+
+        /*
+┌┬─┐
+│╷┌┤
+│ ─│
+└──┘
+         */
+        Maze.grid(3)
+            .openBottom(0, 0)
+            .openBottom(1, 0)
+            .print()
+
+
+//        makeMaze(
+//            Maze.grid(size),
+//            ArrayDeque<Coordinates>().apply {
+//                addLast(Coordinates(0, 0))
+//            }
+//        )
+
     }
 }
+
+internal tailrec fun makeMaze(initialMaze: Maze, stack: ArrayDeque<Coordinates>): Maze {
+    val visitedMaze = initialMaze.visit(stack.last())
+
+    if (visitedMaze.completed()) {
+        return visitedMaze
+    }
+
+
+    val updatedMaze = visitedMaze.randomUnvisitedNeighbour(stack.last())?.let {nextStep->
+        visitedMaze.openBetween(stack.last(), nextStep).also {
+            stack.addLast(nextStep)
+        }
+    } ?: visitedMaze.also {
+        stack.removeLast()
+    }
+
+    updatedMaze.print()
+
+    return makeMaze(updatedMaze, stack)
+}
+
+data class Coordinates(
+    val y: Int,
+    val x: Int,
+)

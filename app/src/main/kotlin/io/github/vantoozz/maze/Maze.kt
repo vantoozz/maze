@@ -1,7 +1,10 @@
 package io.github.vantoozz.maze
 
+import kotlin.math.abs
+
 internal data class Cell(
     val borders: Borders,
+    val visited: Boolean,
 ) {
     internal data class Borders(
         val top: Boolean = false,
@@ -10,20 +13,37 @@ internal data class Cell(
         val left: Boolean = false,
     )
 
+    fun openTop() = copy(
+        borders = borders.copy(top = false)
+    )
+
+    fun openRight() = copy(
+        borders = borders.copy(right = false)
+    )
+
+    fun openBottom() = copy(
+        borders = borders.copy(bottom = false)
+    )
+
+    fun openLeft() = copy(
+        borders = borders.copy(left = false)
+    )
+
+
     val closedRight = borders.right
     val closedBottom = borders.bottom
 
     companion object {
-        fun closedTopLeft() = Cell(Borders(top = true, left = true))
-        fun closedTopRight() = Cell(Borders(top = true, right = true))
-        fun closedTop() = Cell(Borders(top = true))
-        fun closedBottomLeft() = Cell(Borders(bottom = true, left = true))
-        fun closedBottomRight() = Cell(Borders(bottom = true, right = true))
-        fun closedBottom() = Cell(Borders(bottom = true))
-        fun closedLeft() = Cell(Borders(left = true))
-        fun closedRight() = Cell(Borders(right = true))
-        fun open() = Cell(Borders())
-        fun closed() = Cell(Borders(top = true, right = true, bottom = true, left = true))
+        fun closedTopLeft() = Cell(Borders(top = true, left = true), false)
+        fun closedTopRight() = Cell(Borders(top = true, right = true), false)
+        fun closedTop() = Cell(Borders(top = true), false)
+        fun closedBottomLeft() = Cell(Borders(bottom = true, left = true), false)
+        fun closedBottomRight() = Cell(Borders(bottom = true, right = true), false)
+        fun closedBottom() = Cell(Borders(bottom = true), false)
+        fun closedLeft() = Cell(Borders(left = true), false)
+        fun closedRight() = Cell(Borders(right = true), false)
+        fun open() = Cell(Borders(), false)
+        fun closed() = Cell(Borders(top = true, right = true, bottom = true, left = true), false)
     }
 }
 
@@ -78,13 +98,14 @@ internal data class Maze(
     }
 
     fun cell(y: Int, x: Int) = cells[y]?.get(x) ?: throw RuntimeException("No such cell $y : $x ")
+    private fun cell(coordinates: Coordinates) = cell(coordinates.y, coordinates.x)
 
     fun openRight(y: Int, x: Int): Maze {
         val map = cells.toMutableMap()
         val row = map[y]?.toMutableMap() ?: mutableMapOf()
-        row[x] = Cell(cell(y, x).borders.copy(right = false))
+        row[x] = cell(y, x).openRight()
         cells[y]?.get(x + 1)?.let {
-            row.put(x + 1, Cell(it.borders.copy(left = false)))
+            row.put(x + 1, it.openLeft())
 
         }
 
@@ -96,10 +117,10 @@ internal data class Maze(
     fun openBottom(y: Int, x: Int): Maze {
         val map = cells.toMutableMap()
         val row = map[y]?.toMutableMap() ?: mutableMapOf()
-        row[x] = Cell(cell(y, x).borders.copy(bottom = false))
+        row[x] = cell(y, x).openBottom()
         val nextRow = map[y + 1]?.toMutableMap()?.apply {
             get(x)?.let {
-                put(x, Cell(it.borders.copy(top = false)))
+                put(x, it.openTop())
             }
         }
 
@@ -110,6 +131,47 @@ internal data class Maze(
             }
         })
     }
+
+    fun visit(coordinates: Coordinates): Maze {
+        val map = cells.toMutableMap()
+        val row = map[coordinates.y]?.toMutableMap() ?: mutableMapOf()
+        row[coordinates.x] = cell(coordinates).copy(visited = true)
+        return Maze(size, map.apply {
+            put(coordinates.y, row)
+        })
+    }
+
+    fun completed() = size * size == cells.entries.fold(0) { count, row ->
+        count + row.value.values.count { it.visited }
+    }
+
+    fun openBetween(one: Coordinates, two: Coordinates) =
+        if (one.y == two.y && abs(one.x - two.x) == 1)
+            openRight(one.y, minOf(one.x, two.x))
+        else if (one.x == two.x && abs(one.y - two.y) == 1)
+            openBottom(minOf(one.y, two.y), one.x)
+        else throw RuntimeException("Not neighbours $one $two")
+
+
+    fun randomUnvisitedNeighbour(coordinates: Coordinates) =
+        setOf(
+            Pair(coordinates.y - 1, coordinates.x),
+            Pair(coordinates.y + 1, coordinates.x),
+            Pair(coordinates.y, coordinates.x - 1),
+            Pair(coordinates.y, coordinates.x + 1)
+        )
+            .asSequence()
+            .filterNot { it.first < 0 }
+            .filterNot { it.first >= size }
+            .filterNot { it.second < 0 }
+            .filterNot { it.second >= size }
+            .map { it to cell(it.first, it.second) }
+            .filterNot { it.second.visited }
+            .toList()
+            .randomOrNull()
+            ?.let {
+                Coordinates(it.first.first, it.first.second)
+            }
 
     companion object {
         fun empty(size: Int) = emptySequence(size).toMazeMap(size)
