@@ -28,68 +28,32 @@ internal fun Maze.asString() = sequence {
                             val leftCell = cell(y, x - 1)
                             val upperLeftCell = cell(y - 1, x - 1)
 
-                            val bit0 = leftCell.closedRight
-                            val bit1 = upperCell.closedBottom
-                            val bit3 = upperLeftCell.closedRight
-                            val bit2 = upperLeftCell.closedBottom
-                            val bit4 = upperCell.closedRight
+                            val bits = mutableSetOf<Int>()
 
-                            val signs = if (bit0) {
-                                listOf('┼', '┬', '├', ' ', '┌', '┌', '┤', '┐', '╷', '╷')
-                            } else {
-                                listOf('┴', '─', '└', ' ', '┌', ' ', '┘', '─', '╵', ' ')
-                            }
+                            if (leftCell.closedRight) bits.add(0b1000)
+                            if (upperCell.closedBottom) bits.add(0b0100)
+                            if (upperLeftCell.closedBottom) bits.add(0b0010)
+                            if (upperLeftCell.closedRight) bits.add(0b0001)
 
-                            val sign =
-                                if (bit1) {
-                                    if (bit2) {
-                                        if (bit3) {
-                                            signs[0]
-                                        } else {
-                                            signs[1]
-                                        }
-                                    } else {
-                                        if (bit3) {
-                                            if (bit4) {
-                                                signs[2]
-                                            } else {
-                                                signs[3]
-                                            }
-                                        } else {
-                                            if (bit4) {
-                                                signs[4]
-                                            } else {
-                                                signs[5]
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    if (bit2) {
-                                        if (bit3) {
-                                            signs[6]
-                                        } else {
-                                            signs[7]
-                                        }
-                                    } else {
-                                        if(bit3){
-                                            if (bit4) {
-                                                '1'
-                                            } else {
-                                                '2'
-                                            }
-                                        }
-                                        else{
-                                            if (bit4) {
-                                                '3'
-                                            } else {
-                                                '4'
-                                            }
-                                        }
-
-                                    }
-                                }
-
-                            yield(sign)
+                            val chars = listOf(
+                                ' ',
+                                '╵',
+                                '╴',
+                                '┘',
+                                '╶',
+                                '└',
+                                '─',
+                                '┴',
+                                '╷',
+                                '│',
+                                '┐',
+                                '┤',
+                                '┌',
+                                '├',
+                                '┬',
+                                '┼',
+                            )
+                            yield(chars[bits.sum()])
                         }
                     }
                 }

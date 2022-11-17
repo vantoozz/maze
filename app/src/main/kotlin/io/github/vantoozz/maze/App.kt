@@ -17,6 +17,9 @@ private class Generate : SimpleCommand() {
 
     override fun handle() {
         Maze.grid(size)
+            .openRight(2,0)
+            .print()
+        Maze.grid(size)
             .openBottom(1, 1)
             .openRight(1, 0)
             .print()
@@ -58,27 +61,43 @@ private class Generate : SimpleCommand() {
             .openBottom(1, 1)
             .openRight(2, 1)
             .print()
-
+//
         Maze.empty(size).print()
-
-        /*
-┌┬─┐
-│╷┌┤
-│ ─│
-└──┘
-         */
+//
         Maze.grid(3)
             .openBottom(0, 0)
+            .openBottom(1, 2)
+            .openBottom(1, 0)
+            .openRight(2, 0)
+            .openRight(2, 1)
+            .openRight(1, 1)
+            .print()
+
+        Maze.grid(3)
+            .openBottom(0, 1)
+            .openBottom(1, 1)
+            .openRight(0, 0)
+            .openRight(2, 0)
             .openBottom(1, 0)
             .print()
 
+        Maze.grid(3)
+            .openRight(0, 0)
+            .openRight(0, 1)
+            .openBottom(0,2)
+            .openBottom(1,2)
+            .openRight(2, 1)
+            .openRight(2, 0)
+            .openBottom(1,0)
+            .openRight(1,0)
+            .print()
 
-//        makeMaze(
-//            Maze.grid(size),
-//            ArrayDeque<Coordinates>().apply {
-//                addLast(Coordinates(0, 0))
-//            }
-//        )
+        makeMaze(
+            Maze.grid(size),
+            ArrayDeque<Coordinates>().apply {
+                addLast(Coordinates(0, 0))
+            }
+        )
 
     }
 }
