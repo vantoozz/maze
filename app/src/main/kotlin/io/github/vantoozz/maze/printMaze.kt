@@ -5,26 +5,26 @@ internal fun Maze.print() {
 }
 
 internal fun Maze.asString() = sequence {
-    repeat(size + 1) { y ->
+    repeat(height + 1) { y ->
 
         yield(sequence {
 
-            repeat(size + 1) { x ->
+            repeat(width + 1) { x ->
                 when (y) {
                     0 -> when (x) {
                         0 -> yield('┌')
-                        size -> yield('┐')
+                        width -> yield('┐')
                         else -> if (cell(y, x - 1).closedRight) yield('┬') else yield('─')
                     }
-                    size -> when (x) {
+                    height -> when (x) {
                         0 -> yield('└')
-                        size -> yield('┘')
+                        width -> yield('┘')
                         else -> if (cell(y - 1, x - 1).closedRight) yield('┴') else yield('─')
                     }
                     else -> {
                         when (x) {
                             0 -> if (cell(y - 1, x).closedBottom) yield('├') else yield('│')
-                            size -> if (cell(y - 1, x - 1).closedBottom) yield('┤') else yield('│')
+                            width -> if (cell(y - 1, x - 1).closedBottom) yield('┤') else yield('│')
                             else -> {
 
                                 val upperCell = cell(y - 1, x)

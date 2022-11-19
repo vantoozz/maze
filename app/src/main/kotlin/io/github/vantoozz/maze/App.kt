@@ -1,5 +1,6 @@
 package io.github.vantoozz.maze
 
+import com.github.ajalt.clikt.parameters.options.defaultLazy
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.int
@@ -10,27 +11,43 @@ fun main(args: Array<String>) = kli(Generate()).main(args)
 
 private class Generate : SimpleCommand() {
 
-    private val size
-            by option("-s", "--size", help = "Maze size")
+    private val width
+            by option("-w", "--width", help = "Maze width")
                 .int()
                 .required()
 
+    private val height
+            by option("-h", "--height", help = "Maze height")
+                .int()
+                .defaultLazy { width }
+
     override fun handle() {
-        makeMaze(
-            Maze.grid(size),
-            ArrayDeque<Coordinates>().apply {
-                addLast(Coordinates(0, 0))
+        val start = Coordinates(0, 0)
+        val stack = ArrayDeque<Coordinates>()
+            .apply {
+                addLast(start)
             }
-        ).print()
+
+        val result = makeMaze(
+            Maze.grid(height, width),
+            stack,
+            LongestPath(stack.size, start)
+        )
+        result.first.print()
+        println(result.second)
 
     }
 }
 
-internal tailrec fun makeMaze(initialMaze: Maze, stack: ArrayDeque<Coordinates>): Maze {
+internal tailrec fun makeMaze(
+    initialMaze: Maze,
+    stack: ArrayDeque<Coordinates>,
+    longestPath: LongestPath,
+): Pair<Maze, LongestPath> {
     val visitedMaze = initialMaze.visit(stack.last())
 
     if (visitedMaze.completed()) {
-        return visitedMaze
+        return visitedMaze to longestPath
     }
 
 
@@ -42,10 +59,19 @@ internal tailrec fun makeMaze(initialMaze: Maze, stack: ArrayDeque<Coordinates>)
         stack.removeLast()
     }
 
-    return makeMaze(updatedMaze, stack)
+    return makeMaze(
+        updatedMaze, stack, if (stack.size > longestPath.length) {
+            LongestPath(stack.size, stack.last())
+        } else longestPath
+    )
 }
 
-data class Coordinates(
+internal data class Coordinates(
     val y: Int,
     val x: Int,
+)
+
+internal data class LongestPath(
+    val length: Int,
+    val coordinates: Coordinates,
 )

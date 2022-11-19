@@ -48,17 +48,26 @@ internal data class Cell(
 }
 
 internal data class Maze(
-    val size: Int,
+    val height: Int,
+    val width: Int,
     private val cells: Map<Int, Map<Int, Cell>>,
 ) {
+
+    //    internal constructor(
+//        size: Int,
+//        cells: Map<Int, Map<Int, Cell>>
+//    ) : this(size, size, cells)
     init {
-        if (size < 2) {
-            throw RuntimeException("Maze size cannot be smaller that 2")
+        if (width < 2) {
+            throw RuntimeException("Maze width cannot be smaller that 2")
+        }
+        if (height < 2) {
+            throw RuntimeException("Maze height cannot be smaller that 2")
         }
 
-        repeat(size) { y ->
+        repeat(height) { y ->
             cells[y]?.let { row ->
-                repeat(size) { x ->
+                repeat(width) { x ->
                     if (row[x] == null) {
                         throw RuntimeException("No cell [$y][$x]")
                     }
@@ -72,7 +81,7 @@ internal data class Maze(
                             throw RuntimeException("Inconsistent cell at $y : $x")
                         }
                     }
-                    if (y == size - 1) {
+                    if (y == height - 1) {
                         if (cells[y]?.get(x)?.borders?.bottom != true) {
                             throw RuntimeException("Inconsistent cell at $y : $x")
                         }
@@ -82,7 +91,7 @@ internal data class Maze(
                             throw RuntimeException("Inconsistent cell at $y : $x")
                         }
                     }
-                    if (x == size - 1) {
+                    if (x == width - 1) {
                         if (cells[y]?.get(x)?.borders?.right != true) {
                             throw RuntimeException("Inconsistent cell at $y : $x")
                         }
@@ -109,7 +118,7 @@ internal data class Maze(
 
         }
 
-        return Maze(size, map.apply {
+        return Maze(height, width, map.apply {
             put(y, row)
         })
     }
@@ -124,7 +133,7 @@ internal data class Maze(
             }
         }
 
-        return Maze(size, map.apply {
+        return Maze(height, width, map.apply {
             put(y, row)
             nextRow?.let {
                 put(y + 1, nextRow)
@@ -136,12 +145,12 @@ internal data class Maze(
         val map = cells.toMutableMap()
         val row = map[coordinates.y]?.toMutableMap() ?: mutableMapOf()
         row[coordinates.x] = cell(coordinates).copy(visited = true)
-        return Maze(size, map.apply {
+        return Maze(height, width, map.apply {
             put(coordinates.y, row)
         })
     }
 
-    fun completed() = size * size == cells.entries.fold(0) { count, row ->
+    fun completed() = height * width == cells.entries.fold(0) { count, row ->
         count + row.value.values.count { it.visited }
     }
 
@@ -162,9 +171,9 @@ internal data class Maze(
         )
             .asSequence()
             .filterNot { it.first < 0 }
-            .filterNot { it.first >= size }
+            .filterNot { it.first >= height }
             .filterNot { it.second < 0 }
-            .filterNot { it.second >= size }
+            .filterNot { it.second >= width }
             .map { it to cell(it.first, it.second) }
             .filterNot { it.second.visited }
             .toList()
@@ -174,11 +183,15 @@ internal data class Maze(
             }
 
     companion object {
-        fun empty(size: Int) = emptySequence(size).toMazeMap(size)
+        fun empty(size: Int) = empty(size, size)
 
-        fun grid(size: Int) = gridSequence(size).toMazeMap(size)
+        fun empty(height: Int, width: Int) = emptySequence(height, width).toMazeMap(height, width)
 
-        private fun Sequence<Triple<Int, Int, Cell>>.toMazeMap(size: Int) =
+        fun grid(size: Int) = grid(size, size)
+
+        fun grid(height: Int, width: Int) = gridSequence(height, width).toMazeMap(height, width)
+
+        private fun Sequence<Triple<Int, Int, Cell>>.toMazeMap(height: Int, width: Int) =
             fold(mutableMapOf<Int, MutableMap<Int, Cell>>()) { carry, (y, x, cell) ->
                 carry.also { map ->
                     map[y] = (map[y] ?: mutableMapOf()).also { row ->
@@ -186,29 +199,29 @@ internal data class Maze(
                     }
                 }
             }.let {
-                Maze(size, it)
+                Maze(height, width, it)
             }
 
-        private fun emptySequence(size: Int) = sequence {
-            repeat(size) { y ->
-                repeat(size) { x ->
+        private fun emptySequence(height: Int, width: Int) = sequence {
+            repeat(height) { y ->
+                repeat(width) { x ->
                     yield(
                         Triple(
                             y, x,
                             when (y) {
                                 0 -> when (x) {
                                     0 -> Cell.closedTopLeft()
-                                    size - 1 -> Cell.closedTopRight()
+                                    width - 1 -> Cell.closedTopRight()
                                     else -> Cell.closedTop()
                                 }
-                                size - 1 -> when (x) {
+                                height - 1 -> when (x) {
                                     0 -> Cell.closedBottomLeft()
-                                    size - 1 -> Cell.closedBottomRight()
+                                    width - 1 -> Cell.closedBottomRight()
                                     else -> Cell.closedBottom()
                                 }
                                 else -> when (x) {
                                     0 -> Cell.closedLeft()
-                                    size - 1 -> Cell.closedRight()
+                                    width - 1 -> Cell.closedRight()
                                     else -> Cell.open()
                                 }
                             }
@@ -218,9 +231,9 @@ internal data class Maze(
             }
         }
 
-        private fun gridSequence(size: Int) = sequence {
-            repeat(size) { y ->
-                repeat(size) { x ->
+        private fun gridSequence(height: Int, width: Int) = sequence {
+            repeat(height) { y ->
+                repeat(width) { x ->
                     yield(
                         Triple(y, x, Cell.closed())
                     )
