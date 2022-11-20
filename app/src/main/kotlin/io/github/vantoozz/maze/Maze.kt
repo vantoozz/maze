@@ -106,7 +106,9 @@ internal data class Maze(
         }
     }
 
-    fun cell(y: Int, x: Int) = cells[y]?.get(x) ?: throw RuntimeException("No such cell $y : $x ")
+    fun cell(y: Int, x: Int) = cellOrNull(y,x) ?: throw RuntimeException("No such cell $y : $x ")
+    fun cellOrNull(y: Int, x: Int) = cells[y]?.get(x)
+
     private fun cell(coordinates: Coordinates) = cell(coordinates.y, coordinates.x)
 
     fun openRight(y: Int, x: Int): Maze {

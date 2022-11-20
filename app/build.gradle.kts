@@ -25,6 +25,7 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:${V.junit}")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:${V.junit}")
 }
 
 application {

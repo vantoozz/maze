@@ -33,7 +33,10 @@ private class Generate : SimpleCommand() {
             stack,
             LongestPath(stack.size, start)
         )
-        result.first.print()
+        result.first.let{
+            println(it.asString())
+            println(it.asJson())
+        }
         println(result.second)
 
     }
