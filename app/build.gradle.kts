@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
     application
 }
 
@@ -8,20 +8,14 @@ repositories {
 }
 
 object V {
-    const val kli = "0.0.1"
-    const val logback = "1.2.11"
-    const val slf4j = "1.7.36"
+    const val clikt = "3.5.0"
     const val junit = "5.9.1"
 }
 
 dependencies {
     implementation(kotlin("bom"))
 
-    implementation("org.slf4j:slf4j-api:${V.slf4j}")
-    implementation("ch.qos.logback:logback-core:${V.logback}")
-    implementation("ch.qos.logback:logback-classic:${V.logback}")
-
-    implementation("io.github.vantoozz.kli:runner:${V.kli}")
+    implementation("com.github.ajalt.clikt:clikt:${V.clikt}")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:${V.junit}")

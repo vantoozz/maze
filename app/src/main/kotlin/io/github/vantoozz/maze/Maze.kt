@@ -1,62 +1,13 @@
 package io.github.vantoozz.maze
 
+import io.github.vantoozz.maze.printer.Printer
 import kotlin.math.abs
 
-internal data class Cell(
-    val borders: Borders,
-    val visited: Boolean,
-) {
-    internal data class Borders(
-        val top: Boolean = false,
-        val right: Boolean = false,
-        val bottom: Boolean = false,
-        val left: Boolean = false,
-    )
-
-    fun openTop() = copy(
-        borders = borders.copy(top = false)
-    )
-
-    fun openRight() = copy(
-        borders = borders.copy(right = false)
-    )
-
-    fun openBottom() = copy(
-        borders = borders.copy(bottom = false)
-    )
-
-    fun openLeft() = copy(
-        borders = borders.copy(left = false)
-    )
-
-
-    val closedRight = borders.right
-    val closedBottom = borders.bottom
-
-    companion object {
-        fun closedTopLeft() = Cell(Borders(top = true, left = true), false)
-        fun closedTopRight() = Cell(Borders(top = true, right = true), false)
-        fun closedTop() = Cell(Borders(top = true), false)
-        fun closedBottomLeft() = Cell(Borders(bottom = true, left = true), false)
-        fun closedBottomRight() = Cell(Borders(bottom = true, right = true), false)
-        fun closedBottom() = Cell(Borders(bottom = true), false)
-        fun closedLeft() = Cell(Borders(left = true), false)
-        fun closedRight() = Cell(Borders(right = true), false)
-        fun open() = Cell(Borders(), false)
-        fun closed() = Cell(Borders(top = true, right = true, bottom = true, left = true), false)
-    }
-}
-
-internal data class Maze(
+internal class Maze private constructor(
     val height: Int,
     val width: Int,
     private val cells: Map<Int, Map<Int, Cell>>,
 ) {
-
-    //    internal constructor(
-//        size: Int,
-//        cells: Map<Int, Map<Int, Cell>>
-//    ) : this(size, size, cells)
     init {
         if (width < 2) {
             throw RuntimeException("Maze width cannot be smaller that 2")
@@ -106,7 +57,7 @@ internal data class Maze(
         }
     }
 
-    fun cell(y: Int, x: Int) = cellOrNull(y,x) ?: throw RuntimeException("No such cell $y : $x ")
+    fun cell(y: Int, x: Int) = cellOrNull(y, x) ?: throw RuntimeException("No such cell $y : $x ")
     fun cellOrNull(y: Int, x: Int) = cells[y]?.get(x)
 
     private fun cell(coordinates: Coordinates) = cell(coordinates.y, coordinates.x)
@@ -143,7 +94,7 @@ internal data class Maze(
         })
     }
 
-    fun visit(coordinates: Coordinates): Maze {
+    private fun visit(coordinates: Coordinates): Maze {
         val map = cells.toMutableMap()
         val row = map[coordinates.y]?.toMutableMap() ?: mutableMapOf()
         row[coordinates.x] = cell(coordinates).copy(visited = true)
@@ -152,11 +103,11 @@ internal data class Maze(
         })
     }
 
-    fun completed() = height * width == cells.entries.fold(0) { count, row ->
+    private fun completed() = height * width == cells.entries.fold(0) { count, row ->
         count + row.value.values.count { it.visited }
     }
 
-    fun openBetween(one: Coordinates, two: Coordinates) =
+    private fun openBetween(one: Coordinates, two: Coordinates) =
         if (one.y == two.y && abs(one.x - two.x) == 1)
             openRight(one.y, minOf(one.x, two.x))
         else if (one.x == two.x && abs(one.y - two.y) == 1)
@@ -164,7 +115,7 @@ internal data class Maze(
         else throw RuntimeException("Not neighbours $one $two")
 
 
-    fun randomUnvisitedNeighbour(coordinates: Coordinates) =
+    private fun randomUnvisitedNeighbour(coordinates: Coordinates) =
         setOf(
             Pair(coordinates.y - 1, coordinates.x),
             Pair(coordinates.y + 1, coordinates.x),
@@ -192,6 +143,38 @@ internal data class Maze(
         fun grid(size: Int) = grid(size, size)
 
         fun grid(height: Int, width: Int) = gridSequence(height, width).toMazeMap(height, width)
+
+        fun random(height: Int, width: Int): Maze {
+            return makeMaze(
+                grid(height, width),
+                ArrayDeque<Coordinates>()
+                    .apply {
+                        addLast(Coordinates(0, 0))
+                    }
+            )
+        }
+
+
+        private tailrec fun makeMaze(
+            initialMaze: Maze,
+            stack: ArrayDeque<Coordinates>,
+        ): Maze {
+            val visitedMaze = initialMaze.visit(stack.last())
+
+            if (visitedMaze.completed()) {
+                return visitedMaze
+            }
+
+            val updatedMaze = visitedMaze.randomUnvisitedNeighbour(stack.last())?.let { nextStep ->
+                visitedMaze.openBetween(stack.last(), nextStep).also {
+                    stack.addLast(nextStep)
+                }
+            } ?: visitedMaze.also {
+                stack.removeLast()
+            }
+
+            return makeMaze(updatedMaze, stack)
+        }
 
         private fun Sequence<Triple<Int, Int, Cell>>.toMazeMap(height: Int, width: Int) =
             fold(mutableMapOf<Int, MutableMap<Int, Cell>>()) { carry, (y, x, cell) ->
@@ -243,5 +226,15 @@ internal data class Maze(
             }
         }
     }
+
+    fun printWith(printer: Printer) =
+        with(printer) {
+            this@Maze.print()
+        }
+
+    private data class Coordinates(
+        val y: Int,
+        val x: Int,
+    )
 
 }

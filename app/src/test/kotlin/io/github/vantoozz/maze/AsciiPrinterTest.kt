@@ -1,11 +1,12 @@
 package io.github.vantoozz.maze
 
+import io.github.vantoozz.maze.printer.AsciiPrinter
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.assertEquals
 
-internal class AsStringTest {
+internal class AsciiPrinterTest {
 
     @ParameterizedTest
     @MethodSource("examples")
@@ -13,7 +14,7 @@ internal class AsStringTest {
         maze: Maze,
         expected: String,
     ) {
-        assertEquals(expected, maze.asString())
+        assertEquals(expected, maze.printWith(AsciiPrinter()))
     }
 
     companion object {
