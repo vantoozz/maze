@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     kotlin("multiplatform") version "1.7.21"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
     application
 }
 
@@ -29,13 +29,14 @@ kotlin {
         binaries {
             executable {
                 entryPoint = "io.github.vantoozz.maze.main"
+                baseName = "maze"
             }
         }
     }
 
     jvm {
         compilations.all {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions.jvmTarget = "1.8"
         }
         withJava()
         testRuns["test"].executionTask.configure {
@@ -57,8 +58,8 @@ kotlin {
     }
 
     jvmToolchain {
-        languageVersion
-            .set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(11))
+        vendor.set(JvmVendorSpec.AMAZON)
     }
 }
 
