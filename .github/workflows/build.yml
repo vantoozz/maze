@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
-          distribution: 'corretto'
+          distribution: 'temurin'
           check-latest: true
           cache: 'gradle'
       - uses: gradle/gradle-build-action@v2
