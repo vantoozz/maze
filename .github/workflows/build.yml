@@ -19,7 +19,6 @@ jobs:
         with:
           java-version: 11
           distribution: 'temurin'
-          check-latest: true
           cache: 'gradle'
       - uses: gradle/gradle-build-action@v2
         with:
@@ -27,4 +26,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: maze-${{ matrix.os }}
-          path: app/build/bin/native/releaseExecutable
+          path: app/build/bin/native/releaseExecutable/*exe
