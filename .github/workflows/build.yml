@@ -19,6 +19,8 @@ jobs:
         with:
           java-version: 11
           distribution: 'corretto'
+          check-latest: true
+          cache: 'gradle'
       - uses: gradle/gradle-build-action@v2
         with:
           arguments: build --scan
