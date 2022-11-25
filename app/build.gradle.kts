@@ -1,5 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("multiplatform") version "1.7.21"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     application
 }
 
@@ -9,36 +12,61 @@ repositories {
 
 object V {
     const val clikt = "3.5.0"
-    const val junit = "5.9.1"
-}
-
-dependencies {
-    implementation(kotlin("bom"))
-
-    implementation("com.github.ajalt.clikt:clikt:${V.clikt}")
-
-    testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter:${V.junit}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${V.junit}")
-}
-
-application {
-    mainClass.set("io.github.vantoozz.maze.AppKt")
-}
-
-tasks {
-    test {
-        useJUnitPlatform()
-    }
-
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
-    }
 }
 
 kotlin {
+
+    when (
+        System.getProperty("os.name")
+            .takeUnless { it.startsWith("Windows") }
+            ?: "Windows"
+    ) {
+        "Mac OS X" -> macosX64("native")
+        "Linux" -> linuxX64("native")
+        "Windows" -> mingwX64("native")
+        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+    }.apply {
+        binaries {
+            executable {
+                entryPoint = "io.github.vantoozz.maze.main"
+            }
+        }
+    }
+
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "11"
+        }
+        withJava()
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
+    }
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("com.github.ajalt.clikt:clikt:${V.clikt}")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+    }
+
     jvmToolchain {
         languageVersion
             .set(JavaLanguageVersion.of(11))
     }
+}
+
+tasks.withType<ShadowJar> {
+    mergeServiceFiles()
+    isZip64 = true
+}
+
+application {
+    mainClass.set("io.github.vantoozz.maze.AppKt")
 }

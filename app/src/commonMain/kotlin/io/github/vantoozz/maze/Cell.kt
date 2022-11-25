@@ -27,7 +27,6 @@ internal data class Cell(
         borders = borders.copy(left = false)
     )
 
-
     val closedRight = borders.right
     val closedBottom = borders.bottom
 

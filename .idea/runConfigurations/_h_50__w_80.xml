@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="-w 140 -h 20" type="KonanRunConfiguration" factoryName="KonanApp" PROGRAM_PARAMS="-w 140 -h 20" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$/app" PASS_PARENT_ENVS_2="true">
+  <configuration default="false" name="-h 50 -w 80" type="KonanRunConfiguration" factoryName="KonanApp" PROGRAM_PARAMS="-h 50 -w 80" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$/app" PASS_PARENT_ENVS_2="true">
     <executable TARGET="macos_x64" TARGET_NAME="native" EXECUTABLE_NAME="app" PROJECT_PREFIX=":app:" IS_TEST="false">
       <variant NAME="Debug" GRADLE_TASK=":app:linkDebugExecutableNative" FILE="$PROJECT_DIR$/app/build/bin/native/debugExecutable/app.kexe" WORKING_DIR="$PROJECT_DIR$/app" PROGRAM_PARAMS="">
         <envs />

@@ -23,7 +23,6 @@ internal class JsonPrinter : Printer {
                         bits.add(0b0100)
                     }
 
-
                     if (leftCell == null) {
                         bits.add(0b1000)
                         bits.add(0b0010)

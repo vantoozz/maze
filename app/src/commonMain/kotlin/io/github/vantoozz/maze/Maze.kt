@@ -114,7 +114,6 @@ internal class Maze private constructor(
             openBottom(minOf(one.y, two.y), one.x)
         else throw RuntimeException("Not neighbours $one $two")
 
-
     private fun randomUnvisitedNeighbour(coordinates: Coordinates) =
         setOf(
             Pair(coordinates.y - 1, coordinates.x),
@@ -153,7 +152,6 @@ internal class Maze private constructor(
                     }
             )
         }
-
 
         private tailrec fun makeMaze(
             initialMaze: Maze,
