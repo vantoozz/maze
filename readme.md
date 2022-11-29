@@ -13,6 +13,7 @@ Options:
 ```
 
 #### Example run
+
 ```shell
 ➜ maze -w 80 -h 25       
 ┌─┬────┬───┬────────────┬──┬─────┬────┬────┬──┬───┬──┬───────┬────────┬────┬────┐
@@ -44,6 +45,7 @@ Options:
 ```
 
 #### Height is optional
+
 ```shell
 ➜ maze -w 10      
 ┌┬──┬──┬──┐
@@ -60,6 +62,7 @@ Options:
 ```
 
 #### Output as JSON
+
 ```shell
 ➜ maze -w 10 -h 5 -f json
 [

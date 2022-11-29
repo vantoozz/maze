@@ -1,14 +1,14 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="-w 3 -f json" type="KonanRunConfiguration" factoryName="KonanApp" PROGRAM_PARAMS="-w 3 -f json" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$/app" PASS_PARENT_ENVS_2="true">
-    <executable TARGET="macos_x64" TARGET_NAME="native" EXECUTABLE_NAME="app" PROJECT_PREFIX=":app:" IS_TEST="false">
-      <variant NAME="Debug" GRADLE_TASK=":app:linkDebugExecutableNative" FILE="$PROJECT_DIR$/app/build/bin/native/debugExecutable/app.kexe" WORKING_DIR="$PROJECT_DIR$/app" PROGRAM_PARAMS="">
+    <executable TARGET="macos_x64" TARGET_NAME="native" EXECUTABLE_NAME="maze" PROJECT_PREFIX=":app:" IS_TEST="false">
+      <variant NAME="Debug" GRADLE_TASK=":app:linkDebugExecutableNative" FILE="$PROJECT_DIR$/app/build/bin/native/debugExecutable/maze.kexe" WORKING_DIR="$PROJECT_DIR$/app" PROGRAM_PARAMS="">
         <envs />
       </variant>
-      <variant NAME="Release" GRADLE_TASK=":app:linkReleaseExecutableNative" FILE="$PROJECT_DIR$/app/build/bin/native/releaseExecutable/app.kexe" WORKING_DIR="$PROJECT_DIR$/app" PROGRAM_PARAMS="">
+      <variant NAME="Release" GRADLE_TASK=":app:linkReleaseExecutableNative" FILE="$PROJECT_DIR$/app/build/bin/native/releaseExecutable/maze.kexe" WORKING_DIR="$PROJECT_DIR$/app" PROGRAM_PARAMS="">
         <envs />
       </variant>
     </executable>
-    <variant NAME="Debug" GRADLE_TASK=":app:linkDebugExecutableNative" FILE="$PROJECT_DIR$/app/build/bin/native/debugExecutable/app.kexe" WORKING_DIR="$PROJECT_DIR$/app" PROGRAM_PARAMS="">
+    <variant NAME="Debug" GRADLE_TASK=":app:linkDebugExecutableNative" FILE="$PROJECT_DIR$/app/build/bin/native/debugExecutable/maze.kexe" WORKING_DIR="$PROJECT_DIR$/app" PROGRAM_PARAMS="">
       <envs />
     </variant>
     <method v="2">

@@ -10,10 +10,10 @@ internal class Maze private constructor(
 ) {
     init {
         if (width < 2) {
-            throw RuntimeException("Maze width cannot be smaller that 2")
+            throw RuntimeException("Maze width cannot be smaller than 2")
         }
         if (height < 2) {
-            throw RuntimeException("Maze height cannot be smaller that 2")
+            throw RuntimeException("Maze height cannot be smaller than 2")
         }
 
         repeat(height) { y ->
@@ -57,10 +57,13 @@ internal class Maze private constructor(
         }
     }
 
+    private data class LongestPath(
+        val length: Int,
+        val coordinates: Coordinates,
+    )
+
     fun cell(y: Int, x: Int) = cellOrNull(y, x) ?: throw RuntimeException("No such cell $y : $x ")
     fun cellOrNull(y: Int, x: Int) = cells[y]?.get(x)
-
-    private fun cell(coordinates: Coordinates) = cell(coordinates.y, coordinates.x)
 
     fun openRight(y: Int, x: Int): Maze {
         val map = cells.toMutableMap()
@@ -93,6 +96,13 @@ internal class Maze private constructor(
             }
         })
     }
+
+    fun printWith(printer: Printer) =
+        with(printer) {
+            this@Maze.print()
+        }
+
+    private fun cell(coordinates: Coordinates) = cell(coordinates.y, coordinates.x)
 
     private fun visit(coordinates: Coordinates): Maze {
         val map = cells.toMutableMap()
@@ -133,6 +143,11 @@ internal class Maze private constructor(
             ?.let {
                 Coordinates(it.first.first, it.first.second)
             }
+
+    private data class Coordinates(
+        val y: Int,
+        val x: Int,
+    )
 
     companion object {
         fun empty(size: Int) = empty(size, size)
@@ -224,15 +239,4 @@ internal class Maze private constructor(
             }
         }
     }
-
-    fun printWith(printer: Printer) =
-        with(printer) {
-            this@Maze.print()
-        }
-
-    private data class Coordinates(
-        val y: Int,
-        val x: Int,
-    )
-
 }
